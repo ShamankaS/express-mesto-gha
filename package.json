@@ -10,8 +10,10 @@
   "author": "Tata Slyadneva",
   "license": "ISC",
   "dependencies": {
-    "eslint": "^8.46.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.28.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.46.0"
   }
 }
