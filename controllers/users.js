@@ -20,6 +20,7 @@ module.exports.getUsers = async (req, res) => {
 module.exports.getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
+    console.log(user);
     res.send(user);
   } catch (err) {
     console.log(err.name);
