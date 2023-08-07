@@ -20,7 +20,7 @@ module.exports.createCard = async (req, res) => {
   } catch (err) {
     if (err.name === 'ValidationError') {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
-        message: 'Переданы некорректные данные при создании карточки',
+        message: 'Переданы некорректные данные',
       });
     }
     res.status(DEFAULT_ERROR_CODE).send({
@@ -31,6 +31,12 @@ module.exports.createCard = async (req, res) => {
 
 module.exports.deleteCard = async (req, res) => {
   try {
+    const card = await Card.findById(req.params.cardId);
+    if (!card) {
+      return res.status(NOT_FOUND_ERROR_CODE).json({
+        message: 'Карточка не найдена',
+      });
+    }
     await Card.findByIdAndDelete(req.params.cardId);
     res.send({
       message: 'Карточка удалена',
@@ -38,8 +44,8 @@ module.exports.deleteCard = async (req, res) => {
   } catch (err) {
     console.log(err.name);
     if (err.name === 'CastError') {
-      return res.status(NOT_FOUND_ERROR_CODE).send({
-        message: 'Карточка по указанному _id не найдена',
+      return res.status(INCORRECT_DATA_ERROR_CODE).send({
+        message: 'Переданы некорректные данные',
       });
     }
     res.status(DEFAULT_ERROR_CODE).send({
@@ -63,14 +69,12 @@ const handleCardLike = async (req, res, options) => {
         message: 'Карточка не найдена',
       });
     }
-    res.send({
-      message: 'Лайк на карточке успешно поставлен/снят',
-    });
+    res.send(updatedCard);
   } catch (err) {
     console.log(err.name);
-    if (err.name === 'ValidationError' || err.name === 'CastError') {
+    if (err.name === 'CastError') {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
-        message: 'Переданы некорректные данные для постановки/снятии лайка',
+        message: 'Переданы некорректные данные',
       });
     }
     res.status(DEFAULT_ERROR_CODE).send({
