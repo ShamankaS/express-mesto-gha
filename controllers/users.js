@@ -19,12 +19,16 @@ module.exports.getUsers = async (req, res) => {
 
 module.exports.getUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
-    res.send(user);
+    await User.findById(req.params.userId);
   } catch (err) {
+    if (err.name === 'ValidationError') {
+      return res.status(INCORRECT_DATA_ERROR_CODE).send({
+        message: 'Переданы некорректные данные',
+      });
+    }
     if (err.name === 'CastError') {
       return res.status(NOT_FOUND_ERROR_CODE).send({
-        message: `Пользователь по указанному _id: ${req.params.userId} не найден`,
+        message: 'Пользователь по указанному id не найден',
       });
     }
     res.status(DEFAULT_ERROR_CODE).send({
@@ -38,7 +42,7 @@ module.exports.createUser = async (req, res) => {
     const { name, about, avatar } = req.body;
     await User.create({ name, about, avatar });
     res.send({
-      message: `Пользователь ${name} успешно создан`,
+      message: 'Пользователь успешно создан',
     });
   } catch (err) {
     if (err.name === 'ValidationError') {

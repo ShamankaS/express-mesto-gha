@@ -22,7 +22,7 @@ module.exports.createCard = async (req, res) => {
     const { name, link } = req.body;
     await Card.create({ name, link, owner: req.user._id });
     res.send({
-      message: `Карточка ${name} успешно создана`,
+      message: 'Карточка успешно создана',
     });
   } catch (err) {
     if (err.name === 'ValidationError') {
@@ -40,7 +40,7 @@ module.exports.deleteCard = async (req, res) => {
   try {
     await Card.findByIdAndDelete(req.params.cardId);
     res.send({
-      message: `Карточка _id: ${req.params.cardId} удалена`,
+      message: 'Карточка удалена',
     });
   } catch (err) {
     console.log(err.name);
@@ -66,13 +66,13 @@ const handleCardLike = async (req, res, options) => {
       { path: 'likes', model: 'user' },
     ]);
     res.send({
-      message: `Лайк на карточке _id: ${req.params.cardId} успешно поставлен/снят`,
+      message: 'Лайк на карточке успешно поставлен/снят',
     });
   } catch (err) {
     console.log(err);
     if (err.name === 'CastError') {
       return res.status(NOT_FOUND_ERROR_CODE).send({
-        message: `Карточка по указанному _id: ${req.params.cardId} не найдена`,
+        message: 'Карточка по указанному _id не найдена',
       });
     }
     if (err.name === 'ValidationError') {
