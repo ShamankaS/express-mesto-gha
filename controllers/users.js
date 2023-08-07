@@ -22,14 +22,14 @@ module.exports.getUser = async (req, res) => {
     const { id } = req.params.userId;
     const user = await User.findById(id);
     if (!user) {
-      return res.status(INCORRECT_DATA_ERROR_CODE).send({
+      return res.status(NOT_FOUND_ERROR_CODE).send({
         message: 'Пользователь не найден',
       });
     }
     res.send(user);
   } catch (err) {
     console.log(err.name);
-    if (err.name === 'CastError') {
+    if (err.kind === 'ObjectId') {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
         message: 'Переданы некорректные данные',
       });
@@ -65,13 +65,13 @@ module.exports.updateUserName = async (req, res) => {
       { name, about },
       { new: true, runValidators: true },
     );
-    res.send(updatedUser);
-  } catch (err) {
-    if (err.name === 'CastError') {
+    if (!updatedUser) {
       return res.status(NOT_FOUND_ERROR_CODE).send({
         message: 'Пользователь по указанному _id не найден',
       });
     }
+    res.send(updatedUser);
+  } catch (err) {
     if (err.name === 'ValidationError') {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
         message: 'Переданы некорректные данные',
