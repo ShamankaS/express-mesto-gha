@@ -19,8 +19,7 @@ module.exports.getUsers = async (req, res) => {
 
 module.exports.getUser = async (req, res) => {
   try {
-    const { id } = req.params.userId;
-    const user = await User.findById(id);
+    const user = await User.findById(req.params.userId);
     if (!user) {
       return res.status(NOT_FOUND_ERROR_CODE).send({
         message: 'Пользователь не найден',
@@ -28,10 +27,9 @@ module.exports.getUser = async (req, res) => {
     }
     res.send(user);
   } catch (err) {
-    console.log(err.name);
-    if (err.kind === 'ObjectId') {
+    if (err.name === 'CastError') {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
-        message: 'Переданы некорректные данные',
+        message: 'Пользователь не найден',
       });
     }
     res.status(DEFAULT_ERROR_CODE).send({
