@@ -20,10 +20,8 @@ module.exports.getCards = async (req, res) => {
 module.exports.createCard = async (req, res) => {
   try {
     const { name, link } = req.body;
-    await Card.create({ name, link, owner: req.user._id });
-    res.send({
-      message: 'Карточка успешно создана',
-    });
+    const createdCard = await Card.create({ name, link, owner: req.user._id });
+    res.send(createdCard);
   } catch (err) {
     if (err.name === 'ValidationError') {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
@@ -58,23 +56,22 @@ module.exports.deleteCard = async (req, res) => {
 const handleCardLike = async (req, res, options) => {
   try {
     const action = options.addLike ? '$addToSet' : '$pull';
-    await Card.findByIdAndUpdate(
+    const updatedCard = await Card.findByIdAndUpdate(
       req.params.cardId,
       { [action]: { likes: req.user._id } },
       { new: true },
     ).populate([
       { path: 'likes', model: 'user' },
     ]);
+    if (!updatedCard) {
+      return res.status(NOT_FOUND_ERROR_CODE).send({
+        message: 'Карточка не найдена',
+      });
+    }
     res.send({
       message: 'Лайк на карточке успешно поставлен/снят',
     });
   } catch (err) {
-    console.log(err);
-    if (err.name === 'CastError') {
-      return res.status(NOT_FOUND_ERROR_CODE).send({
-        message: 'Карточка по указанному _id не найдена',
-      });
-    }
     if (err.name === 'ValidationError') {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
         message: 'Переданы некорректные данные для постановки/снятии лайка',
