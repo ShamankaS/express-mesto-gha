@@ -12,7 +12,7 @@ module.exports.getUsers = async (req, res) => {
     res.send(user);
   } catch (err) {
     res.status(DEFAULT_ERROR_CODE).send({
-      message: 'Не удалось получить пользователей',
+      message: 'На сервере произошла ошибка',
     });
   }
 };
@@ -28,7 +28,7 @@ module.exports.getUser = async (req, res) => {
       });
     }
     res.status(DEFAULT_ERROR_CODE).send({
-      message: 'Не удалось получить пользователей',
+      message: 'На сервере произошла ошибка',
     });
   }
 };
@@ -47,7 +47,7 @@ module.exports.createUser = async (req, res) => {
       });
     }
     res.status(DEFAULT_ERROR_CODE).send({
-      message: 'Не удалось создать пользователя',
+      message: 'На сервере произошла ошибка',
     });
   }
 };
@@ -73,7 +73,7 @@ module.exports.updateUserName = async (req, res) => {
       });
     }
     res.status(DEFAULT_ERROR_CODE).send({
-      message: 'Не удалось изменить информацию о пользователе',
+      message: 'На сервере произошла ошибка',
     });
   }
 };
@@ -99,7 +99,7 @@ module.exports.updateUserAvatar = async (req, res) => {
       });
     }
     res.status(DEFAULT_ERROR_CODE).send({
-      message: 'Не удалось изменить аватар пользователя',
+      message: 'На сервере произошла ошибка',
     });
   }
 };

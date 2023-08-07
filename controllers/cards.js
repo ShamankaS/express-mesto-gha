@@ -12,7 +12,7 @@ module.exports.getCards = async (req, res) => {
     res.send(cards);
   } catch (err) {
     res.status(DEFAULT_ERROR_CODE).send({
-      message: 'Не удалось получить карточки',
+      message: 'На сервере произошла ошибка',
     });
   }
 };
@@ -31,7 +31,7 @@ module.exports.createCard = async (req, res) => {
       });
     }
     res.status(DEFAULT_ERROR_CODE).send({
-      message: 'Не удалось создать карточку',
+      message: 'На сервере произошла ошибка',
     });
   }
 };
@@ -50,7 +50,7 @@ module.exports.deleteCard = async (req, res) => {
       });
     }
     res.status(DEFAULT_ERROR_CODE).send({
-      message: 'Не удалось удалить карточку',
+      message: 'На сервере произошла ошибка',
     });
   }
 };
@@ -81,7 +81,7 @@ const handleCardLike = async (req, res, options) => {
       });
     }
     res.status(DEFAULT_ERROR_CODE).send({
-      message: 'Не удалось поставить/снять лайк',
+      message: 'На сервере произошла ошибка',
     });
   }
 };
