@@ -19,7 +19,8 @@ module.exports.getUsers = async (req, res) => {
 
 module.exports.getUser = async (req, res) => {
   try {
-    await User.findById(req.params.userId);
+    const user = await User.findById(req.params.userId);
+    res.send(user);
   } catch (err) {
     if (err.name === 'ValidationError') {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
@@ -40,10 +41,8 @@ module.exports.getUser = async (req, res) => {
 module.exports.createUser = async (req, res) => {
   try {
     const { name, about, avatar } = req.body;
-    await User.create({ name, about, avatar });
-    res.send({
-      message: 'Пользователь успешно создан',
-    });
+    const createdUser = await User.create({ name, about, avatar });
+    res.send(createdUser);
   } catch (err) {
     if (err.name === 'ValidationError') {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
