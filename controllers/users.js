@@ -22,12 +22,13 @@ module.exports.getUser = async (req, res) => {
     const { id } = req.params.userId;
     const user = await User.findById(id);
     if (!user) {
-      return res.status(NOT_FOUND_ERROR_CODE).send({
+      return res.status(INCORRECT_DATA_ERROR_CODE).send({
         message: 'Пользователь не найден',
       });
     }
     res.send(user);
   } catch (err) {
+    console.log(err.name);
     if (err.name === 'CastError') {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
         message: 'Переданы некорректные данные',
