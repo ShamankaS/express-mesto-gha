@@ -8,8 +8,13 @@
     "dev": "nodemon app.js",
     "lint": "npx eslint ."
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShamankaS/express-mesto-gha.git"
+  },
   "author": "Tata Slyadneva",
   "license": "ISC",
+  "homepage": "https://github.com/ShamankaS/express-mesto-gha#readme",
   "devDependencies": {
     "@types/node": "^20.4.7",
     "eslint": "^8.46.0",
