@@ -1,11 +1,17 @@
+const { mongoose } = require('mongoose');
 const Card = require('../models/card');
 const { DEFAULT_ERROR_CODE, NOT_FOUND_ERROR_CODE, INCORRECT_DATA_ERROR_CODE } = require('../utils/constants');
 
 module.exports.getCards = async (req, res) => {
   try {
-    const cards = await Card.find({});
+    const cards = await Card.find({}).orFail();
     res.send(cards);
   } catch (err) {
+    if (err instanceof mongoose.Error.DocumentNotFoundError) {
+      return res.status(NOT_FOUND_ERROR_CODE).send({
+        message: 'Карточки не найдены',
+      });
+    }
     res.status(DEFAULT_ERROR_CODE).send({
       message: 'На сервере произошла ошибка',
     });
@@ -18,7 +24,7 @@ module.exports.createCard = async (req, res) => {
     const createdCard = await Card.create({ name, link, owner: req.user._id });
     res.send(createdCard);
   } catch (err) {
-    if (err.name === 'ValidationError') {
+    if (err instanceof mongoose.Error.ValidationError) {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
         message: 'Переданы некорректные данные',
       });
@@ -31,18 +37,17 @@ module.exports.createCard = async (req, res) => {
 
 module.exports.deleteCard = async (req, res) => {
   try {
-    const card = await Card.findById(req.params.cardId);
-    if (!card) {
-      return res.status(NOT_FOUND_ERROR_CODE).json({
-        message: 'Карточка не найдена',
-      });
-    }
-    await Card.findByIdAndDelete(req.params.cardId);
+    await Card.findByIdAndDelete(req.params.cardId).orFail();
     res.send({
       message: 'Карточка удалена',
     });
   } catch (err) {
-    if (err.name === 'ValidationError') {
+    if (err instanceof mongoose.Error.DocumentNotFoundError) {
+      return res.status(NOT_FOUND_ERROR_CODE).send({
+        message: 'Карточка не найдена',
+      });
+    }
+    if (err instanceof mongoose.Error.ValidationError) {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
         message: 'Переданы некорректные данные',
       });
@@ -62,15 +67,15 @@ const handleCardLike = async (req, res, options) => {
       { new: true },
     ).populate([
       { path: 'likes', model: 'user' },
-    ]);
-    if (!updatedCard) {
+    ]).orFail();
+    res.send(updatedCard);
+  } catch (err) {
+    if (err instanceof mongoose.Error.DocumentNotFoundError) {
       return res.status(NOT_FOUND_ERROR_CODE).send({
         message: 'Карточка не найдена',
       });
     }
-    res.send(updatedCard);
-  } catch (err) {
-    if (err.name === 'ValidationError') {
+    if (err instanceof mongoose.Error.ValidationError) {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
         message: 'Переданы некорректные данные',
       });
