@@ -28,6 +28,11 @@ module.exports.getUser = async (req, res) => {
         message: 'Пользователь не найден',
       });
     }
+    if (err instanceof mongoose.Error.CastError) {
+      return res.status(INCORRECT_DATA_ERROR_CODE).send({
+        message: 'Переданы некорректные данные',
+      });
+    }
     res.status(DEFAULT_ERROR_CODE).send({
       message: 'На сервере произошла ошибка',
     });

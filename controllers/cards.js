@@ -47,7 +47,7 @@ module.exports.deleteCard = async (req, res) => {
         message: 'Карточка не найдена',
       });
     }
-    if (err instanceof mongoose.Error.ValidationError) {
+    if (err instanceof mongoose.Error.CastError) {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
         message: 'Переданы некорректные данные',
       });
@@ -75,7 +75,7 @@ const handleCardLike = async (req, res, options) => {
         message: 'Карточка не найдена',
       });
     }
-    if (err instanceof mongoose.Error.ValidationError) {
+    if (err instanceof mongoose.Error.CastError) {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
         message: 'Переданы некорректные данные',
       });
