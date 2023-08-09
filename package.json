@@ -16,7 +16,6 @@
   "license": "ISC",
   "homepage": "https://github.com/ShamankaS/express-mesto-gha#readme",
   "devDependencies": {
-    "@types/node": "^20.4.7",
     "eslint": "^8.46.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.28.0",
