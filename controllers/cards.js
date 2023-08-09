@@ -8,7 +8,9 @@ module.exports.getCards = async (req, res) => {
     res.send(cards);
   } catch (err) {
     if (err instanceof mongoose.Error.DocumentNotFoundError) {
-      return res.status(NOT_FOUND_ERROR_CODE).send();
+      return res.status(NOT_FOUND_ERROR_CODE).send({
+        message: 'Карточки не найдены',
+      });
     }
     res.status(DEFAULT_ERROR_CODE).send({
       message: 'На сервере произошла ошибка',
