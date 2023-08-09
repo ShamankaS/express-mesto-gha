@@ -4,7 +4,7 @@ const { DEFAULT_ERROR_CODE, NOT_FOUND_ERROR_CODE, INCORRECT_DATA_ERROR_CODE } = 
 
 module.exports.getUsers = async (req, res) => {
   try {
-    const user = await User.find({});
+    const user = await User.find({}).orFail();
     res.send(user);
   } catch (err) {
     if (err instanceof mongoose.Error.DocumentNotFoundError) {
