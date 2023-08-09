@@ -4,11 +4,6 @@ const { DEFAULT_ERROR_CODE, NOT_FOUND_ERROR_CODE, INCORRECT_DATA_ERROR_CODE } = 
 module.exports.getUsers = async (req, res) => {
   try {
     const user = await User.find({});
-    if (user.length === 0) {
-      return res.send({
-        message: 'В базе данных отсутствуют пользователи',
-      });
-    }
     res.send(user);
   } catch (err) {
     res.status(DEFAULT_ERROR_CODE).send({
@@ -20,14 +15,14 @@ module.exports.getUsers = async (req, res) => {
 module.exports.getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
-    if (!user) {
+    res.send(user);
+  } catch (err) {
+    if (err.name === 'CastError') {
       return res.status(NOT_FOUND_ERROR_CODE).send({
         message: 'Пользователь не найден',
       });
     }
-    res.send(user);
-  } catch (err) {
-    if (err.name === 'CastError') {
+    if (err.name === 'ValidationError') {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
         message: 'Пользователь не найден',
       });
@@ -91,11 +86,6 @@ module.exports.updateUserAvatar = async (req, res) => {
     );
     res.send(updatedUser);
   } catch (err) {
-    if (err.name === 'CastError') {
-      return res.status(NOT_FOUND_ERROR_CODE).send({
-        message: 'Пользователь по указанному _id не найден',
-      });
-    }
     if (err.name === 'ValidationError') {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
         message: 'Переданы некорректные данные',

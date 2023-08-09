@@ -42,7 +42,7 @@ module.exports.deleteCard = async (req, res) => {
       message: 'Карточка удалена',
     });
   } catch (err) {
-    if (err.kind === 'ObjectId') {
+    if (err.name === 'ValidationError') {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
         message: 'Переданы некорректные данные',
       });
@@ -70,7 +70,7 @@ const handleCardLike = async (req, res, options) => {
     }
     res.send(updatedCard);
   } catch (err) {
-    if (err.kind === 'ObjectId') {
+    if (err.name === 'ValidationError') {
       return res.status(INCORRECT_DATA_ERROR_CODE).send({
         message: 'Переданы некорректные данные',
       });
