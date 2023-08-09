@@ -1,7 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const mainRoutes = require('./routes/index');
+const userRoutes = require('./routes/users');
+const cardRoutes = require('./routes/cards');
 const { NOT_FOUND_ERROR_CODE } = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
@@ -13,12 +14,13 @@ app.use(bodyParser.json());
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '64d3a3f9e9deb1ac299a214f',
+    _id: '64d0c8f65326e2a6213ac1ea',
   };
   next();
 });
 
-app.use('/', mainRoutes);
+app.use('/users', userRoutes);
+app.use('/cards', cardRoutes);
 
 app.use('*', (req, res) => {
   res.status(NOT_FOUND_ERROR_CODE).send({
