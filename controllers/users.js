@@ -7,11 +7,6 @@ module.exports.getUsers = async (req, res) => {
     const user = await User.find({});
     res.send(user);
   } catch (err) {
-    if (err instanceof mongoose.Error.DocumentNotFoundError) {
-      return res.status(NOT_FOUND_ERROR_CODE).send({
-        message: 'Пользователи не найдены',
-      });
-    }
     res.status(DEFAULT_ERROR_CODE).send({
       message: 'На сервере произошла ошибка',
     });
@@ -56,11 +51,11 @@ module.exports.createUser = async (req, res) => {
   }
 };
 
-async function updateUserData(req, res) {
+const updateUserData = async (req, res, data) => {
   try {
     const user = await User.findByIdAndUpdate(
       req.user._id,
-      req.body,
+      data,
       { new: true, runValidators: true },
     ).orFail();
     res.send(user);
@@ -79,8 +74,14 @@ async function updateUserData(req, res) {
       message: 'На сервере произошла ошибка',
     });
   }
-}
+};
 
-module.exports.updateUserName = async (req, res) => updateUserData(req, res);
+module.exports.updateUserName = (req, res) => {
+  const { name, about } = req.body;
+  updateUserData(req, res, { name, about });
+};
 
-module.exports.updateUserAvatar = async (req, res) => updateUserData(req, res);
+module.exports.updateUserAvatar = (req, res) => {
+  const { avatar } = req.body;
+  updateUserData(req, res, { avatar });
+};
