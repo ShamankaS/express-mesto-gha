@@ -39,12 +39,10 @@ module.exports.createUser = async (req, res, next) => {
       name, about, avatar, email, password,
     } = req.body;
     const hash = await bcrypt.hash(password, 10);
-    await User.create({
+    const createdUser = await User.create({
       name, about, avatar, email, password: hash,
     });
-    res.send({
-      message: 'Пользователь успешно создан',
-    });
+    res.send(createdUser);
   } catch (err) {
     if (err.code === 11000) {
       next(new ConflictError('Пользователь с данным email уже зарегистрирован'));
@@ -90,9 +88,10 @@ module.exports.login = async (req, res, next) => {
     const { email, password } = req.body;
     const user = await User.findUserByCredentials(email, password);
     const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
-    res.status(200).cookie('jwt', token, {
+    return res.cookie('authorization', token, {
       maxAge: 3600000 * 24 * 7,
       httpOnly: true,
+      secure: NODE_ENV === 'production',
     }).send({ message: 'Авторизация прошла успешно' });
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
