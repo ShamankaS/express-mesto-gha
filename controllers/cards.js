@@ -1,5 +1,6 @@
 const { mongoose } = require('mongoose');
 const Card = require('../models/card');
+const { SUCCESS_CREATED_CODE } = require('../utils/constants');
 const BadRequestError = require('../utils/errors/bad-request-err');
 const NotFoundError = require('../utils/errors/not-found-err');
 const ForbiddenError = require('../utils/errors/forbidden-err');
@@ -17,7 +18,7 @@ module.exports.createCard = async (req, res, next) => {
   try {
     const { name, link } = req.body;
     const createdCard = await Card.create({ name, link, owner: req.user._id });
-    res.send(createdCard);
+    res.status(SUCCESS_CREATED_CODE).send(createdCard);
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
       next(new BadRequestError(err.message));

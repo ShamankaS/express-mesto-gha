@@ -1,8 +1,8 @@
 const { mongoose } = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
 const User = require('../models/user');
+const { SUCCESS_CREATED_CODE } = require('../utils/constants');
 const BadRequestError = require('../utils/errors/bad-request-err');
 const NotFoundError = require('../utils/errors/not-found-err');
 const ConflictError = require('../utils/errors/conflict-err');
@@ -45,7 +45,7 @@ module.exports.createUser = async (req, res, next) => {
     // удаляем пароль созданного пользователя из ответа
     const user = createdUser.toObject();
     delete user.password;
-    res.send(user);
+    res.status(SUCCESS_CREATED_CODE).send(user);
   } catch (err) {
     if (err.code === 11000) {
       next(new ConflictError('Пользователь с данным email уже зарегистрирован'));
