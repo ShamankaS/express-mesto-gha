@@ -20,7 +20,7 @@ module.exports.getUsers = async (req, res, next) => {
 
 module.exports.getUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.userId).orFail();
+    const user = await User.findById(req.params.id).orFail();
     res.send(user);
   } catch (err) {
     if (err instanceof mongoose.Error.DocumentNotFoundError) {
@@ -42,7 +42,10 @@ module.exports.createUser = async (req, res, next) => {
     const createdUser = await User.create({
       name, about, avatar, email, password: hash,
     });
-    res.send(createdUser);
+    // удаляем пароль созданного пользователя из ответа
+    const user = createdUser.toObject();
+    delete user.password;
+    res.send(user);
   } catch (err) {
     if (err.code === 11000) {
       next(new ConflictError('Пользователь с данным email уже зарегистрирован'));
@@ -54,13 +57,14 @@ module.exports.createUser = async (req, res, next) => {
   }
 };
 
-const updateUserData = async (req, res, next, data) => {
+const updateUserData = async (req, res, data, next) => {
   try {
+    const userId = req.user._id;
     const user = await User.findByIdAndUpdate(
-      req.user._id,
+      userId,
       data,
       { new: true, runValidators: true },
-    ).orFail();
+    );
     res.send(user);
   } catch (err) {
     if (err instanceof mongoose.Error.DocumentNotFoundError) {
@@ -73,9 +77,9 @@ const updateUserData = async (req, res, next, data) => {
   }
 };
 
-module.exports.updateUserName = (req, res) => {
+module.exports.updateUserName = (req, res, next) => {
   const { name, about } = req.body;
-  updateUserData(req, res, { name, about });
+  updateUserData(req, res, { name, about }, next);
 };
 
 module.exports.updateUserAvatar = (req, res) => {
@@ -104,7 +108,8 @@ module.exports.login = async (req, res, next) => {
 
 module.exports.getMe = async (req, res, next) => {
   try {
-    const user = await User.findOne({ _id: req.user._id });
+    const { _id } = req.user;
+    const user = await User.findOne({ _id });
     res.send(user);
   } catch (err) {
     return next(err);
