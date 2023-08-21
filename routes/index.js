@@ -1,8 +1,17 @@
-const mainRoutes = require('express').Router();
+const protectedRoutes = require('express').Router();
+const commonRoutes = require('express').Router();
+const { login, createUser } = require('../controllers/users');
 const userRoutes = require('./users');
 const cardRoutes = require('./cards');
+const { validateLogin, validateRegister } = require('../utils/validators/userValidator');
 
-mainRoutes.use('/users', userRoutes);
-mainRoutes.use('/cards', cardRoutes);
+commonRoutes.post('/signin', validateLogin, login);
+commonRoutes.post('/signup', validateRegister, createUser);
 
-module.exports = mainRoutes;
+protectedRoutes.use('/users', userRoutes);
+protectedRoutes.use('/cards', cardRoutes);
+
+module.exports = {
+  commonRoutes,
+  protectedRoutes,
+};
