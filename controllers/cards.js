@@ -65,10 +65,10 @@ const handleCardLike = async (req, res, next, options) => {
   }
 };
 
-module.exports.likeCard = (req, res) => {
-  handleCardLike(req, res, { addLike: true });
+module.exports.likeCard = (req, res, next) => {
+  handleCardLike(req, res, next, { addLike: true });
 };
 
-module.exports.dislikeCard = (req, res) => {
-  handleCardLike(req, res, { addLike: false });
+module.exports.dislikeCard = (req, res, next) => {
+  handleCardLike(req, res, next, { addLike: false });
 };
