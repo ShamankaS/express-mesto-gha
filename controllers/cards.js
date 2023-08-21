@@ -2,6 +2,7 @@ const { mongoose } = require('mongoose');
 const Card = require('../models/card');
 const BadRequestError = require('../utils/errors/bad-request-err');
 const NotFoundError = require('../utils/errors/not-found-err');
+const ForbiddenError = require('../utils/errors/forbidden-err');
 
 module.exports.getCards = async (req, res, next) => {
   try {
@@ -28,10 +29,15 @@ module.exports.createCard = async (req, res, next) => {
 
 module.exports.deleteCard = async (req, res, next) => {
   try {
-    await Card.findByIdAndDelete(req.params.cardId).orFail();
-    res.send({
-      message: 'Карточка удалена',
-    });
+    const card = await Card.findById(req.params.cardId).orFail();
+    if (card.owner.toString() === req.user._id) {
+      Card.deleteOne({ _id: req.params.cardId });
+      res.send({
+        message: 'Карточка удалена',
+      });
+    } else {
+      next(new ForbiddenError('Нельзя удалять карточку другого пользователя'));
+    }
   } catch (err) {
     if (err instanceof mongoose.Error.DocumentNotFoundError) {
       next(new NotFoundError('Карточка не найдена'));
