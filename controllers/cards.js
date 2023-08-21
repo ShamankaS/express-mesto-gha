@@ -31,7 +31,7 @@ module.exports.deleteCard = async (req, res, next) => {
   try {
     const card = await Card.findById(req.params.cardId).orFail();
     if (card.owner.toString() === req.user._id) {
-      Card.deleteOne({ _id: req.params.cardId });
+      await Card.deleteOne(card);
       res.send({
         message: 'Карточка удалена',
       });
